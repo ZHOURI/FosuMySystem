@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context.xsd
+   http://www.springframework.org/schema/mvc
+   http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+    <!-- 开启注解扫描 -->
+    <context:component-scan base-package="cn.honeyjam">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 视图解析器对象 -->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!-- 开启SpringMVC注解模式 ，能支持springMVC更高级的功能，JR303校验，快捷AJAX-->
+    <!--<mvc:annotation-driven/>-->
+    <!--<mvc:interceptors>-->
+        <!--<mvc:interceptor>-->
+            <!--<mvc:mapping path="/*"/>-->
+            <!--<mvc:exclude-mapping path="/query" />-->
+            <!--&lt;!&ndash;<mvc:exclude-mapping path="logout" />&ndash;&gt;-->
+            <!--&lt;!&ndash;<mvc:mapping path="/read-header"/>&ndash;&gt;-->
+            <!--<bean class="cn.honeyjam.dorm.interceptor.LoginInterceptor"></bean>-->
+        <!--</mvc:interceptor>-->
+    <!--</mvc:interceptors>-->
+    <!--前端控制器，哪些静态资源不拦截-->
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/image/" mapping="/image/**"/>
+    <mvc:resources location="/js/" mapping="/js/**"/>
+    <!--两个标准配置-->
+    <!--将springMVC不能处理的请求交给tomcat-->
+    <mvc:default-servlet-handler/>
+    <!--解决返回的中文乱码问题-->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=UTF-8</value>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>application/xml;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 限制上传文件的总大小,单位是字节-->
+        <!--<property name="maxUploadSize" value="20000"></property>-->
+    </bean>
+
+
+
+</beans>
