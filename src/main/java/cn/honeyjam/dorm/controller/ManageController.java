@@ -28,6 +28,7 @@ public class ManageController {
         Manager manager = (Manager) request.getSession().getAttribute("user");
         return manager;
     }
+
     @GetMapping("ownInfo.do")
     public ModelAndView ownInfo(HttpServletRequest request)
     {
@@ -948,5 +949,113 @@ public class ManageController {
         }
         return ResponseEntity.ok(map);
     }
+    @RequestMapping("addNotice.do")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> addNotice(
+            HttpServletRequest request,
+            @RequestBody Notice notice
+    )
+    {
+        Map<String,String> map = new HashMap<>();
+        Manager manager = convert(request);
+        Boolean b = service.addNotice(notice,manager.getDormId());
+        if(b)
+        {
+            map.put("success","添加成功");
+            map.put("status","true");
+        }
+        else
+        {
+            map.put("error","添加失败");
+            map.put("status","false");
+        }
+        return ResponseEntity.ok(map);
+    }
+    @RequestMapping("addFees.do")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> addFees(
+            HttpServletRequest request,
+            @RequestBody Fees fees
+    )
+    {
+        Map<String,String> map = new HashMap<>();
+        Boolean b = service.addFees(fees);
+        if(b)
+        {
+            map.put("success","添加成功");
+            map.put("status","true");
+        }
+        else
+        {
+            map.put("error","添加失败");
+            map.put("status","false");
+        }
+        return ResponseEntity.ok(map);
+    }
+    @RequestMapping("addHealth.do")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> addHealth(
+            HttpServletRequest request,
+            @RequestBody Health health
+    )
+    {
+        Map<String,String> map = new HashMap<>();
+        Boolean b = service.addHealth(health);
+        if(b)
+        {
+            map.put("success","添加成功");
+            map.put("status","true");
+        }
+        else
+        {
+            map.put("error","添加失败");
+            map.put("status","false");
+        }
+        return ResponseEntity.ok(map);
+    }
+    @RequestMapping("addVisitor.do")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> addVisitor(
+            HttpServletRequest request,
+            @RequestBody Visitor visitor
+    )
+    {
+        Map<String,String> map = new HashMap<>();
+        Manager manager = convert(request);
+        Boolean b = service.addVisitor(visitor,manager.getDormId());
+        if(b)
+        {
+            map.put("success","添加成功");
+            map.put("status","true");
+        }
+        else
+        {
+            map.put("error","添加失败");
+            map.put("status","false");
+        }
+        return ResponseEntity.ok(map);
+    }
+    @RequestMapping("addWater.do")
+    @ResponseBody
+    public ResponseEntity<Map<String,String>> addWater(
+            HttpServletRequest request,
+            @RequestBody Water water
+    )
+    {
+        Map<String,String> map = new HashMap<>();
+        Boolean b = service.addWater(water);
+        if(b)
+        {
+            map.put("success","添加成功");
+            map.put("status","true");
+        }
+        else
+        {
+            map.put("error","添加失败");
+            map.put("status","false");
+        }
+        return ResponseEntity.ok(map);
+    }
+
 }
 

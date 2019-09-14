@@ -14,7 +14,34 @@ $.fn.serializeObject = function()
     });
     return o;
 };
-
+function sendAjax(url) {
+    $("#myform").submit(function (e) {
+        e.preventDefault();
+        var para = $("#myform").serializeObject() ;
+        alert(para);
+        para = JSON.stringify(para) ;
+        $.ajax({
+            url:url,
+            type:"post",
+            contentType:"application/json;charset=UTF-8",
+            data:para,
+            success:function (data) {
+                if(data.status=="true")
+                {
+                    alert(data.success);
+                    self.location=document.referrer;
+                }
+                else
+                {
+                    alert(data.error);
+                }
+            },
+            error:function () {
+                alert("æ·»åŠ å¤±è´¥");
+            }
+        })
+    })
+}
 function mySelect(arg) {
     $("#select option").each(function () {
         if(this.text==arg)
@@ -23,6 +50,25 @@ function mySelect(arg) {
             return;
         }
     })
+}
+
+function editOne(url,id) {
+    $("#myform").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url:url,
+            data:{id:id},
+            type:"post",
+            success:function (data) {
+                alert(data.msg);
+                fresh();
+            },
+            error:function () {
+                alert("è®¿é—®å‡ºé”™");
+            }
+        })
+    })
+
 }
 function editStay(stayId)
 {
@@ -35,21 +81,34 @@ function editStay(stayId)
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
 function getUrlParam(name)
 {
-    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //¹¹ÔìÒ»¸öº¬ÓĞÄ¿±ê²ÎÊıµÄÕıÔò±í´ïÊ½¶ÔÏó
-    var r = window.location.search.substr(1).match(reg);  //Æ¥ÅäÄ¿±ê²ÎÊı
-    if (r!=null) return unescape(r[2]); return null; //·µ»Ø²ÎÊıÖµ
+    var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //æ„é€ ä¸€ä¸ªå«æœ‰ç›®æ ‡å‚æ•°çš„æ­£åˆ™è¡¨è¾¾å¼å¯¹è±¡
+    var r = window.location.search.substr(1).match(reg);  //åŒ¹é…ç›®æ ‡å‚æ•°
+    if (r!=null) return unescape(r[2]); return null; //è¿”å›å‚æ•°å€¼
 }
 function fresh(){
-    // ¿ò¼ÜÄÚÒ³ÃæË¢ĞÂ£º¿ÉÊµÏÖ¾Ö²¿Ë¢ĞÂÓëÕû¸öÒ³ÃæÖØ¶¨Ïò
-    self.location.reload();  //Ë¢ĞÂ¿ò¼ÜÄÚÒ³Ãæ
-    // window.parent.location.href='http://koushuling.top'; //Ò³ÃæÖØ¶¨Ïò
+    // æ¡†æ¶å†…é¡µé¢åˆ·æ–°ï¼šå¯å®ç°å±€éƒ¨åˆ·æ–°ä¸æ•´ä¸ªé¡µé¢é‡å®šå‘
+    self.location.reload();  //åˆ·æ–°æ¡†æ¶å†…é¡µé¢
+    // window.parent.location.href='http://koushuling.top'; //é¡µé¢é‡å®šå‘
 };
+function jump(url,totalPage) {
+    var currentPage = $("#jump").val();
+    if(currentPage<=0||currentPage>totalPage)
+    {
+        alert("è¶…å‡ºé¡µæ•°é™å®šèŒƒå›´");
+        return;
+    }
+    else
+    {
+        window.location.href=url+"&currentPage="+currentPage;
+    }
+
+}
 function editFees(feesId)
 {
     $.ajax({
@@ -61,7 +120,7 @@ function editFees(feesId)
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -77,14 +136,14 @@ function editWater(waterId)
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
 function delSelect() {
     var delSelect = document.getElementById("delSelect");
     delSelect.onclick= function () {
-        var flag= confirm("È·¶¨ÒªÉ¾³ı£¿");
+        var flag= confirm("ç¡®å®šåˆ é™¤æ‰€é€‰é¡¹ï¼Ÿ");
         if(flag)
         {
             var uids = document.getElementsByName("uids");
@@ -100,7 +159,7 @@ function delSelect() {
         }
         if(flag1)
         {
-            document.getElementById("form").submit();
+            $("#myform").submit();
         }
     }
 
@@ -124,7 +183,7 @@ function editRepair(repairId)
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -143,7 +202,7 @@ function addStuPunish() {
         var x=e.pageX-login.offsetLeft;
         var y=e.pageY-login.offsetTop;
         document.onmousemove=function(e){
-            //µã»÷×ÅÒÆ¶¯£¬ËùÒÔonmousemoveÇ¶ÈëÔÚonmousedownÖĞ
+            //ç‚¹å‡»ç€ç§»åŠ¨ï¼Œæ‰€ä»¥onmousemoveåµŒå…¥åœ¨onmousedownä¸­
             e=e||event;
             var loginX=e.pageX-x;
             var loginY=e.pageY-y;
@@ -188,7 +247,7 @@ function addStuPunish() {
 
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -216,7 +275,7 @@ function updateStuFees() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -244,7 +303,7 @@ function updateRepair() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -272,7 +331,7 @@ function updateRoomPunish() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -300,7 +359,7 @@ function updateWater() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -328,7 +387,7 @@ function updateHealth() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -356,7 +415,7 @@ function updateVisitor() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -384,7 +443,7 @@ function updateNotice() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
@@ -412,25 +471,12 @@ function updateStuPunish() {
                 }
             },
             error:function () {
-                alert("·ÃÎÊ³ö´í");
+                alert("è®¿é—®å‡ºé”™");
             }
         })
     })
 }
-function delStuPunish(punishId) {
-    $.ajax({
-        url:"/man/delStuPunish.do",
-        data:{id:punishId},
-        type:"post",
-        success:function (data) {
-            alert(data.msg);
-            fresh();
-        },
-        error:function () {
-            alert("·ÃÎÊ³ö´í");
-        }
-    })
-}
+
 function delStuFees(feesId) {
     $.ajax({
         url:"/man/delStuFees.do",
@@ -441,7 +487,7 @@ function delStuFees(feesId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -455,7 +501,7 @@ function delRoomPunish(roomPunishId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -469,36 +515,48 @@ function delWater(waterId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
-function delHealth(healthId) {
-    $.ajax({
-        url:"/man/delHealth.do",
-        data:{id:healthId},
-        type:"post",
-        success:function (data) {
-            alert(data.msg);
-            fresh();
-        },
-        error:function () {
-            alert("·ÃÎÊ³ö´í");
-        }
+function delOne(url,Id) {
+    $("#myform").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url:url,
+            data:{id:Id},
+            type:"post",
+            success:function (data) {
+                alert(data.msg);
+                fresh();
+            },
+            error:function () {
+                alert("è®¿é—®å‡ºé”™");
+            }
+        })
+    })
+}
+function queryOne(url,Id) {
+    $("#myform").submit(function (e) {
+        e.preventDefault();
+        window.location.href=url+'?id='+Id;
     })
 }
 function delNotice(noticeId) {
-    $.ajax({
-        url:"/man/delNotice.do",
-        data:{id:noticeId},
-        type:"post",
-        success:function (data) {
-            alert(data.msg);
-            fresh();
-        },
-        error:function () {
-            alert("·ÃÎÊ³ö´í");
-        }
+    $("#myform").submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url:"/man/delNotice.do",
+            data:{id:noticeId},
+            type:"post",
+            success:function (data) {
+                alert(data.msg);
+                fresh();
+            },
+            error:function () {
+                alert("è®¿é—®å‡ºé”™");
+            }
+        })
     })
 }
 function delVisitor(visitorId) {
@@ -511,7 +569,7 @@ function delVisitor(visitorId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -525,7 +583,7 @@ function delRepair(repairId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }
@@ -539,7 +597,7 @@ function delStay(stayId) {
             fresh();
         },
         error:function () {
-            alert("·ÃÎÊ³ö´í");
+            alert("è®¿é—®å‡ºé”™");
         }
     })
 }

@@ -67,7 +67,7 @@ public class ManagerProvide {
     {
         for (String key:map.keySet())
         {
-            if(key.equals("rows")||key.equals("currentPage")||key.equals("cids"))
+            if(key.equals("rows")||key.equals("currentPage")||key.equals("cids")||key.equals("uids")||key.equals("uid"))
             {
                 continue;
             }
@@ -78,4 +78,5 @@ public class ManagerProvide {
         }
         return buffer.toString();
     }
+
 }

@@ -68,7 +68,7 @@
             </c:forEach>
         </table>
     </div>
-    <a href="/manage/roomPunishForm.jsp?roomId=${room.roomId}">添加宿舍违纪</a>
+    <a href="/common/addRoomPunishForm.jsp?roomId=${room.roomId}">添加宿舍违纪</a>
 </div>
 <div class="cardBox">
     <div class="headerBox" style="background-color: #5BC0DE;">
@@ -109,7 +109,7 @@
         </tr>
     </c:forEach>
 </table>
-<a href="/manage/roomWaterForm.jsp?roomId=${room.roomId}">添加宿舍水电费</a>
+<a href="/common/addWaterForm.jsp?roomId=${room.roomId}">添加宿舍水电费</a>
 <hr/>
 <table>
     <c:forEach items="${room.healthList}" var="health" varStatus="r">
@@ -122,7 +122,7 @@
         </tr>
     </c:forEach>
 </table>
-<a href="/manage/roomHealthForm.jsp?roomId=${room.roomId}">添加宿舍卫生</a>
+<a href="/common/addHealthForm.jsp?roomId=${room.roomId}">添加宿舍卫生</a>
 <hr/>
 <table>
     <c:forEach items="${room.repairList}" var="repair" varStatus="r">

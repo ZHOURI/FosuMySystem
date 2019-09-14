@@ -29,6 +29,11 @@
     <script src="/js/common.js"></script>
     <!-- 3. 导入bootstrap的js文件 -->
     <script src="../js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            delSelect();
+        })
+    </script>
     <style type="text/css">
         td, th {
             text-align: center;
@@ -39,20 +44,26 @@
 <div class="container">
     <h3 style="text-align: center">学生违纪详情页面</h3>
     <div style="float:left">
-        <form class="form-inline" style="margin: 5px" action="${pageContext.request.contextPath}/man/queryRoomPunish.do?" method="post">
+        <form class="form-inline" style="margin: 5px" action="${pageContext.request.contextPath}/man/queryPunish.do?" method="post">
             <div class="form-group" style="margin-left: 10px">
                 <label for="exampleInputAddress1">学号</label>
                 <input type="text" class="form-control" id="exampleInputAddress1" name="stu_ID" value="${map.stu_ID[0]}">
             </div>
             <div class="form-group" style="margin-left: 10px">
                 <label for="exampleInputAddress2">违纪时间</label>
-                <input type="text" class="form-control" id="exampleInputAddress2" name="punish" value="${map.stu_ID[0]}">
+                <input type="text" class="form-control" id="exampleInputAddress2" name="createtime" value="${map.createtime[0]}">
             </div>
             <button type="submit" class="btn btn-default">搜索</button>
         </form>
     </div>
+    <div style="float: right;">
+        <a href="${pageContext.request.contextPath}/common/addStuPunishForm.jsp?currentPage=${pageResult.currentPage}"><button type="button" class="btn btn-primary">添加学生违纪记录</button></a>
+        <a id="delSelect"><button type="button" class="btn btn-primary">删除选中</button></a>
+    </div>
+    <form method="post" action="${pageContext.request.contextPath}/man/queryPunish.do?currentPage=${pageResult.currentPage}" id="myform">
         <table border="1" class="table table-bordered table-hover">
             <tr class="success">
+                <th><input type="checkbox" name="uid" id="first"></th>
                 <th>编号</th>
                 <th>学号</th>
                 <th>违纪类型</th>
@@ -60,42 +71,55 @@
                 <th>违纪时间</th>
                 <th>操作</th>
             </tr>
-            <c:forEach items="${pageResult.items}" var="punish" varStatus="p">
+            <c:if test="${empty pageResult.items}">
+                <tr><td colspan="6">暂无相关消息</td></tr>
+            </c:if>
+            <c:if test="${not empty pageResult.items}">
+            <c:forEach items="${pageResult.items}" var="punish" varStatus="n">
                 <tr>
+                    <td><input type="checkbox" name="uids" value="${punish.id}"></td>
                     <td>${p.count}</td>
                     <td>${punish.stuId}</td>
                     <td>${punish.type}</td>
                     <td>${punish.comments}</td>
                     <td><fmt:formatDate value="${punish.createtime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
-                    <td><button class="btn btn-default btn-sm" onclick="window.location.href='/man/queryStuPunishOne.do?id=${punish.id}'">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delStuPunish(${punish.id})">删除</button>
+                    <td><button class="btn btn-default btn-sm" onclick="queryOne('/man/queryStuPunishOne.do',${punish.id})">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delOne('/man/delStuPunish.do',${punish.id})">删除</button>
                 </tr>
             </c:forEach>
+            </c:if>
+            <tr>
+                <td colspan="13" align="center"><a class="btn btn-primary" href="${pageContext.request.contextPath}/common/addStuPunishForm.jsp">添加学生违纪记录</a></td>
+            </tr>
         </table>
+    </form>
+    <c:if test="${pageResult.totalPage>0}">
     <ul class="pagination">
         <c:if test="${pageResult.currentPage<=1}">
-        <li class="disabled">
-            </c:if>
-            <c:if test="${pageResult.currentPage>1}">
-        <li>
-            </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryPunish.do?currentPage=${pageResult.currentPage-1}&room_ID=${map.room_ID[0]}" onclick="">&laquo;</a></li>
-        <c:forEach begin="1" end="${pageResult.totalPage}" step="1" varStatus="s" var="i">
+            <li class="disabled"><a href="javascript:void(0)">&laquo;</a></li>
+        </c:if>
+        <c:if test="${pageResult.currentPage>1}">
+            <li><a href="${pageContext.request.contextPath}/man/queryStuPunish.do?currentPage=${pageResult.currentPage-1}&stu_ID=${map.stu_ID[0]}&punish=${map.punish[0]}">&laquo;</a></li>
+        </c:if>
+        <c:forEach begin="${pageResult.currentPage-5>0?(pageResult.totalPage-pageResult.currentPage<=5?pageResult.totalPage-9:pageResult.currentPage-4):1}" end="${pageResult.currentPage<=pageResult.totalPage-5?(pageResult.currentPage+5<10&&pageResult.totalPage>10?10:pageResult.currentPage+5):pageResult.totalPage}" step="1" varStatus="s" var="i">
             <c:if test="${pageResult.currentPage==i}">
-                <li class="active"><a href="${pageContext.request.contextPath}/man/queryPunish.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/man/queryStuPunish.do?currentPage=${i}&stu_ID=${map.stu_ID[0]}&punish=${map.punish[0]}">${i}</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage!=i}">
-                <li><a href="${pageContext.request.contextPath}/man/queryPunish.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
+                <li><a href="${pageContext.request.contextPath}/man/queryStuPunish.do?currentPage=${i}&stu_ID=${map.stu_ID[0]}&punish=${map.punish[0]}">${i}</a></li>
             </c:if>
         </c:forEach>
         <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
-        <li class="disabled">
-            </c:if>
-            <c:if test="${pageResult.currentPage<pageResult.totalPage}">
-        <li>
-            </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryPunish.do?currentPage=${pageResult.currentPage+1}&room_ID=${map.room_ID[0]}}">&raquo;</a></li>
+            <li class="disabled"><a href="javascript:void(0)">&raquo;</a></li>
+        </c:if>
+        <c:if test="${pageResult.currentPage<pageResult.totalPage}">
+            <li><a href="${pageContext.request.contextPath}/man/queryStuPunish.do?currentPage=${pageResult.currentPage+1}&stu_ID=${map.stu_ID[0]}&punish=${map.punish[0]}">&raquo;</a></li>
+        </c:if>
         <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
-    </ul>
+    </ul><br>
+    <span style="font-size: 20px;margin-top: 15px">跳转到：<input type="text" style="width: 40px;height: 30px;" id="jump" value="${pageResult.currentPage}">
+            <a><button type="button" class="btn btn-primary" onclick="jump('/man/queryStuPunish.do?StuPunish_peoper=${map.StuPunish_peoper[0]}',${pageResult.totalPage})">跳转到</button></a>
+        </span>
+    </c:if>
 </div>
 </body>
 </html>

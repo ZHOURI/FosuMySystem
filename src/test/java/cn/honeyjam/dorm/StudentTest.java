@@ -77,4 +77,19 @@ public class StudentTest {
             System.out.println(notice);
         }
     }
+    @Test
+    public void testSwitch()
+    {
+        String name = "punih";
+        switch (name)
+        {
+            case "notice":
+                System.out.println("这是notice");break;
+            case "punish":
+                System.out.println("这是punish");break;
+                default:
+                    System.out.println("这是default");break;
+        }
+    }
+
 }

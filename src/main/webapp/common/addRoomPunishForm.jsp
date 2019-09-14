@@ -26,28 +26,38 @@
     <script src="../js/bootstrap.min.js"></script>
     <script>
         $(function () {
-            // updateNotice();
-            sendAjax("/man/updNotice.do")
+            sendAjax('/man/addRoomPunish.do');
         })
     </script>
 </head>
 <body>
 <div class="container" style="width: 400px;">
-    <h3 style="text-align: center;">修改公告记录</h3>
+    <h3 style="text-align: center;">增加宿舍违纪记录</h3>
     <form action="#" method="post" id="myform">
-        <input type="hidden" name="id" value="${notice.id}">
         <div class="form-group">
-            <label for="content">内容：</label>
-            <input type="text" class="form-control" id="content" name="content" value="${notice.content}" />
-        </div>
-        <div class="form-group">
-            <label for="noticeTime">访问时间：</label>
-            <input type="date" id="noticeTime" class="form-control" name="noticeTime" value="<fmt:formatDate value='${notice.noticeTime}' pattern='yyyy-MM-dd'/>" />
+            <label for="stuId">宿舍号：</label>
+            <input type="text" class="form-control" id="stuId" name="stuId" value="" />
         </div>
 
         <div class="form-group">
-            <label for="noticePeoper">发布人：</label>
-            <input type="text" class="form-control" id="noticePeoper" name="noticePeoper" value="${notice.noticePeoper}" />
+            <label for="select">违纪类型：</label>
+            <select name="type" id="select" class="form-control">
+                <option value="违规大功率电器">违规大功率电器</option>
+                <option value="不按规定时间熄灯">不按规定时间熄灯</option>
+                <option value="夜间大声喧哗">夜间大声喧哗</option>
+                <option value="不按规定时间缴费">不按规定时间缴费</option>
+                <option value="其他">其他</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="createtime">违纪时间：</label>
+            <input type="date" id="createtime" class="form-control" name="createtime" value="" />
+        </div>
+
+        <div class="form-group">
+            <label for="comments">备注：</label>
+            <input type="text" class="form-control" id="comments" name="comments" value=""/>
         </div>
         <div class="form-group" style="text-align: center">
             <input class="btn btn-primary" id="submit1" type="submit" value="提交" />

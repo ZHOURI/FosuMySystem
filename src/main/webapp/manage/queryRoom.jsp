@@ -25,9 +25,15 @@
     <!-- 1. 导入CSS的全局样式 -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <!-- 2. jQuery导入，建议使用1.9以上的版本 -->
-    <script src="../js/jquery-2.1.0.min.js"></script>
+    <script src="../js/jquery-3.2.1.min.js"></script>
     <!-- 3. 导入bootstrap的js文件 -->
     <script src="../js/bootstrap.min.js"></script>
+    <script src="/js/common.js"></script>
+    <script>
+        $(function () {
+            delSelect();
+        })
+    </script>
     <style type="text/css">
         td, th {
             text-align: center;
@@ -46,49 +52,73 @@
             <button type="submit" class="btn btn-default">搜索</button>
         </form>
     </div>
+    <div style="float: right;">
+        <a href="${pageContext.request.contextPath}/common/addRoomForm.jsp?currentPage=${pageResult.currentPage}"><button type="button" class="btn btn-primary">添加公告</button></a>
+        <a id="delSelect"><button type="button" class="btn btn-primary">删除选中</button></a>
+    </div>
+    <form method="post" action="${pageContext.request.contextPath}/man/queryRoom.do?currentPage=${pageResult.currentPage}" id="myform">
         <table border="1" class="table table-bordered table-hover">
             <tr class="success">
+                <th><input type="checkbox" name="uid" id="first"></th>
                 <th>编号</th>
                 <th>宿舍号</th>
                 <th>宿舍成员</th>
                 <th>宿舍人数</th>
                 <th>操作</th>
             </tr>
-            <c:forEach items="${pageResult.items}" var="room" varStatus="r">
-                <tr>
-                    <td>${r.count}</td>
-                    <td>${room.roomId}</td>
-                    <td>${room.members}</td>
-                    <td>${room.count}</td>
-                    <td><a class="btn btn-default btn-sm" href="${pageContext.request.contextPath}/man/queryRoomInfo?id=${room.roomId}&currentPage=${pageResult.currentPage}">详情</a>&nbsp;<a class="btn btn-default btn-sm" href="${pageContext.request.contextPath}/man/queryRoomInfo?id=${room.roomId}&currentPage=${pageResult.currentPage}">管理</a></td>
-                </tr>
-            </c:forEach>
+            <c:if test="${empty pageResult.items}">
+                <tr><td colspan="6">暂无相关消息</td></tr>
+            </c:if>
+            <c:if test="${not empty pageResult.items}">
+                <c:forEach items="${pageResult.items}" var="room" varStatus="r">
+                    <tr>
+                        <td><input type="checkbox" name="uids" value="${room.roomId}"></td>
+                        <td>${r.count}</td>
+                        <td>${room.roomId}</td>
+                        <td>${room.members}</td>
+                        <td>${room.count}</td>
+                        <td>
+                            <a class="btn btn-default btn-sm" href="${pageContext.request.contextPath}/man/queryRoomOne.do?id=${room.roomId}">修改</a>&nbsp;
+                            <a class="btn btn-default btn-sm" href="${pageContext.request.contextPath}/man/delRoom.do?id=${room.roomId}">删除</a>&nbsp;
+                            <a class="btn btn-default btn-sm" href="${pageContext.request.contextPath}/man/queryRoomInfo?id=${room.roomId}&currentPage=${pageResult.currentPage}">管理</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </c:if>
+            <tr>
+                <td colspan="13" align="center"><a class="btn btn-primary" href="${pageContext.request.contextPath}/common/addRoomForm.jsp">添加公告</a></td>
+            </tr>
         </table>
-    <ul class="pagination">
-        <c:if test="${pageResult.currentPage<=1}">
-        <li class="disabled">
+    </form>
+    <c:if test="${pageResult.totalPage>0}">
+        <ul class="pagination">
+            <c:if test="${pageResult.currentPage<=1}">
+                <li class="disabled"><a href="javascript:void(0)">&laquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage>1}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryRoom.do?currentPage=${pageResult.currentPage-1}&room_ID=${map.room_ID[0]}">&laquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryStu.do?currentPage=${pageResult.currentPage-1}&stu_name=${map.stu_name[0]}&room_ID=${map.room_ID[0]}" onclick="">&laquo;</a></li>
-        <c:forEach begin="1" end="${pageResult.totalPage}" step="1" varStatus="s" var="i">
-            <c:if test="${pageResult.currentPage==i}">
-                <li class="active"><a href="${pageContext.request.contextPath}/man/queryStu.do?currentPage=${i}&stu_name=${map.stu_name[0]}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-            <c:if test="${pageResult.currentPage!=i}">
-                <li><a href="${pageContext.request.contextPath}/man/queryStu.do?currentPage=${i}&stu_name=${map.stu_name[0]}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-        </c:forEach>
-        <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
-        <li class="disabled">
+            <c:forEach begin="${pageResult.currentPage-5>0?(pageResult.totalPage-pageResult.currentPage<=5?pageResult.totalPage-9:pageResult.currentPage-4):1}" end="${pageResult.currentPage<=pageResult.totalPage-5?(pageResult.currentPage+5<10&&pageResult.totalPage>10?10:pageResult.currentPage+5):pageResult.totalPage}" step="1" varStatus="s" var="i">
+                <c:if test="${pageResult.currentPage==i}">
+                    <li class="active"><a href="${pageContext.request.contextPath}/man/queryRoom.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
+                </c:if>
+                <c:if test="${pageResult.currentPage!=i}">
+                    <li><a href="${pageContext.request.contextPath}/man/queryRoom.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
+                </c:if>
+            </c:forEach>
+            <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
+                <li class="disabled"><a href="javascript:void(0)">&raquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage<pageResult.totalPage}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryRoom.do?currentPage=${pageResult.currentPage+1}&&room_ID=${map.room_ID[0]}">&raquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryStu.do?currentPage=${pageResult.currentPage+1}&stu_name=${map.stu_name[0]}&room_ID=${map.room_ID[0]}">&raquo;</a></li>
-        <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
-    </ul>
+            <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
+        </ul><br>
+        <span style="font-size: 20px;margin-top: 15px">跳转到：<input type="text" style="width: 40px;height: 30px;" id="jump" value="${pageResult.currentPage}">
+            <a><button type="button" class="btn btn-primary" onclick="jump('/man/queryRoom.do?room_ID=${map.room_ID[0]}',${pageResult.totalPage})">跳转到</button></a>
+        </span>
+    </c:if>
+
 </div>
 </body>
 </html>

@@ -72,43 +72,20 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"student");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Student> studentList = managerMapper.queryStudents(manager.getDormId(), map);
+        List<Student> studentList = null;
+        studentList = managerMapper.queryStudents(manager.getDormId(), map);
+        if(studentList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            studentList = managerMapper.queryStudents(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Student> pageInfo = (Page<Student>)studentList;
-        current(currentPage,pageInfo);
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
-    private Map<String,Object> current(Integer currentPage,Page pageInfo)
-    {
-        Map<String,Object> map = new HashMap<>();
-        int end = 0;
-        int begin = 0;
-        if(currentPage-4>0)
-        {
-            begin = currentPage - 4;
-        }
-        else
-        {
-            begin = 1;
-        }
-        if(currentPage+5<=pageInfo.getPages())
-        {
-            end = currentPage+5;
-            if(currentPage+5<=10)
-                end = 10;
-        }
-        else
-        {
-            end = pageInfo.getPages();
-            if(end>=10)
-                begin = end-9;
-            else
-                begin=1;
-        }
-        map.put("begin",begin);
-        map.put("end",end);
-        return map;
-    }
+
     @Override
     public Boolean updatePassword(String password, Manager manager) {
         manager.setPassword(password);
@@ -170,7 +147,14 @@ public class ManageServiceImpl implements ManageService {
             criteria.andLike(key,"%"+map.get(key)[0]+"%");
         }
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Room> roomList = roomMapper.selectByExample(example);
+        delSelect(map.get("uids"),"notice");
+        List<Room> roomList = null;
+        roomList = roomMapper.selectByExample(example);
+        if(roomList.size()<=0)
+        {
+            roomList = roomMapper.selectByExample(example);
+            currentPage = currentPage-1;
+        }
         Page<Room> pageInfo = (Page<Room>)roomList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -214,8 +198,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"water");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Water> waterList = managerMapper.queryWater(manager.getDormId(), map);
+        List<Water> waterList = null;
+        waterList = managerMapper.queryWater(manager.getDormId(), map);
+        if(waterList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            waterList = managerMapper.queryWater(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Water> pageInfo = (Page<Water>)waterList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -230,8 +222,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"health");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Health> healthList = managerMapper.queryHealth(manager.getDormId(), map);
+        List<Health> healthList = null;
+        healthList = managerMapper.queryHealth(manager.getDormId(), map);
+        if(healthList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            healthList = managerMapper.queryHealth(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Health> pageInfo = (Page<Health>)healthList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -245,8 +245,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"fees");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Fees> feesList = managerMapper.queryFees(manager.getDormId(), map);
+        List<Fees> feesList = null;
+         feesList = managerMapper.queryFees(manager.getDormId(), map);
+        if(feesList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            feesList = managerMapper.queryFees(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Fees> pageInfo = (Page<Fees>)feesList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -260,8 +268,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"punish");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Punish> punishList = managerMapper.queryPunish(manager.getDormId(), map);
+        List<Punish> punishList = null;
+        punishList = managerMapper.queryPunish(manager.getDormId(), map);
+        if(punishList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            punishList = managerMapper.queryPunish(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Punish> pageInfo = (Page<Punish>)punishList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -275,8 +291,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"stay");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Stay> stayList = managerMapper.queryStay(manager.getDormId(), map);
+        List<Stay> stayList = null;
+        stayList = managerMapper.queryStay(manager.getDormId(), map);
+        if(stayList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            stayList = managerMapper.queryStay(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Stay> pageInfo = (Page<Stay>)stayList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -290,8 +314,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"repair");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Repair> repairList = managerMapper.queryRepair(manager.getDormId(), map);
+        List<Repair> repairList = null;
+        repairList = managerMapper.queryRepair(manager.getDormId(), map);
+        if(repairList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            repairList = managerMapper.queryRepair(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Repair> pageInfo = (Page<Repair>)repairList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -305,8 +337,16 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"visitor");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Visitor> visitorList = managerMapper.queryVisitor(manager.getDormId(), map);
+        List<Visitor> visitorList = null;
+        visitorList = managerMapper.queryVisitor(manager.getDormId(), map);
+        if(visitorList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            visitorList = managerMapper.queryVisitor(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Visitor> pageInfo = (Page<Visitor>)visitorList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
@@ -327,11 +367,43 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"notice");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<Notice> noticeList = managerMapper.queryNotice(manager.getDormId(), map);
+        List<Notice> noticeList = null;
+        noticeList = managerMapper.queryNotice(manager.getDormId(), map);
+        if(noticeList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            noticeList = managerMapper.queryNotice(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
         Page<Notice> pageInfo = (Page<Notice>)noticeList;
-        current(currentPage,pageInfo);
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
+    }
+        private void delSelect(String[] uids,String name) {
+        if(uids==null||uids.equals(""))
+        {
+            return;
+        }
+        for(int i=0;i<uids.length;i++)
+        {
+            int uid = Integer.parseInt(uids[i]);
+            switch (name)
+            {
+                case "notice":delNotice(uid);break;
+                case "punish":delStuPunish(uid);break;
+                case "roomPunish":delRoomPunish(uid);break;
+                case "health":delHealth(uid);break;
+                case "fees":delStuFees(uid);break;
+                case "water":delWater(uid);break;
+                case "repair":delRepair(uid);break;
+                case "visitor":delVisitor(uid);break;
+                case "stay":delStay(uid);break;
+                default:
+                    System.out.println("这是default");
+                    break;
+            }
+        }
     }
     @Override
     public PageResult<RoomPunish> queryRoomPunish(Manager manager, Integer currentPage, Integer rows, Map<String, String[]> map) {
@@ -343,9 +415,17 @@ public class ManageServiceImpl implements ManageService {
         {
             rows = 5;
         }
+        delSelect(map.get("uids"),"roomPunish");
         PageHelper.startPage(currentPage, Math.min(rows, 100));
-        List<RoomPunish> waterList = managerMapper.queryRoomPunish(manager.getDormId(), map);
-        Page<RoomPunish> pageInfo = (Page<RoomPunish>)waterList;
+        List<RoomPunish> roomPunishList = null;
+        roomPunishList = managerMapper.queryRoomPunish(manager.getDormId(), map);
+        if(roomPunishList.size()<=0)
+        {
+            PageHelper.startPage(currentPage-1, Math.min(rows, 100));
+            roomPunishList = managerMapper.queryRoomPunish(manager.getDormId(), map);
+            currentPage = currentPage-1;
+        }
+        Page<RoomPunish> pageInfo = (Page<RoomPunish>)roomPunishList;
         return new PageResult<>(pageInfo.getTotal(),Long.parseLong(String.valueOf(pageInfo.getPages())),pageInfo.getResult(),currentPage,rows);
     }
 
@@ -439,6 +519,15 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public Boolean delStuFees(Integer id) {
         int i = feesMapper.deleteByPrimaryKey(id);
+        if(i>0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean delRepair(Integer id) {
+        int i = repairMapper.deleteByPrimaryKey(id);
         if(i>0)
         {
             return true;
@@ -577,9 +666,13 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public Boolean updStuPunish(Punish punish) {
-        int i = punishMapper.updateByPrimaryKeySelective(punish);
-        if(i>0)
-            return true;
+        try {
+            int i = punishMapper.updateByPrimaryKeySelective(punish);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
     @Override
@@ -592,49 +685,133 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public Boolean updWater(Water water) {
-        int i = waterMapper.updateByPrimaryKeySelective(water);
-        if(i>0)
-            return true;
+        try {
+            int i = waterMapper.updateByPrimaryKeySelective(water);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 
     @Override
     public Boolean updRoomPunish(RoomPunish roomPunish) {
-        int i = roomPunishMapper.updateByPrimaryKeySelective(roomPunish);
-        if(i>0)
-            return true;
+        try {
+            int i = roomPunishMapper.updateByPrimaryKeySelective(roomPunish);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 
     @Override
     public Boolean updHealth(Health health) {
-        int i = healthMapper.updateByPrimaryKeySelective(health);
-        if(i>0)
-            return true;
+        try {
+            int i = healthMapper.updateByPrimaryKeySelective(health);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 
     @Override
     public Boolean updVisitor(Visitor visitor) {
-        int i = visitorMapper.updateByPrimaryKeySelective(visitor);
-        if(i>0)
-            return true;
+        try {
+            int i = visitorMapper.updateByPrimaryKeySelective(visitor);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 
     @Override
     public Boolean updRepair(Repair repair) {
-        int i = repairMapper.updateByPrimaryKeySelective(repair);
-        if(i>0)
-            return true;
+        try {
+            int i = repairMapper.updateByPrimaryKeySelective(repair);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 
     @Override
     public Boolean updNotice(Notice notice) {
-        int i = noticeMapper.updateByPrimaryKeySelective(notice);
-        if(i>0)
-            return true;
+        try {
+            int i = noticeMapper.updateByPrimaryKeySelective(notice);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean addNotice(Notice notice,Integer dormId) {
+        notice.setDormId(dormId);
+        try {
+            int i = noticeMapper.insert(notice);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+    @Override
+    public Boolean addFees(Fees fees) {
+        try {
+            int i = feesMapper.insert(fees);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+    @Override
+    public Boolean addHealth(Health health) {
+        try {
+            int i = healthMapper.insert(health);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean addVisitor(Visitor visitor,Integer dormId) {
+        visitor.setDormId(dormId);
+        try {
+            int i = visitorMapper.insert(visitor);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean addWater(Water water) {
+        try {
+            int i = waterMapper.insert(water);
+            if(i>0)
+                return true;
+        } catch (Exception e) {
+            return false;
+        }
         return false;
     }
 }

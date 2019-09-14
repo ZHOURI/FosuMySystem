@@ -29,6 +29,11 @@
     <script src="/js/common.js"></script>
     <!-- 3. 导入bootstrap的js文件 -->
     <script src="../js/bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            delSelect();
+        })
+    </script>
     <style type="text/css">
         td, th {
             text-align: center;
@@ -50,63 +55,77 @@
             </div>
             <div class="form-group" style="margin-left: 10px">
                 <label for="exampleInputAddress3">缴费状态</label>
-                <input type="text" class="form-<!--  -->ontrol" id="exampleInputAddress3" name="paystatus" value="${map.paystatus[0]}">
+                <input type="text" class="form-control" id="exampleInputAddress3" name="paystatus" value="${map.paystatus[0]}">
             </div>
             <button type="submit" class="btn btn-default">搜索</button>
         </form>
     </div>
-    <table border="1" class="table table-bordered table-hover">
-        <tr class="success">
-            <th>编号</th>
-            <th>学号</th>
-            <th>年份</th>
-            <th>缴费金额</th>
-            <th>缴费时间</th>
-            <th>缴费状态</th>
-            <th>操作</th>
-        </tr>
-        <c:forEach items="${pageResult.items}" var="fees" varStatus="f">
-            <tr>
-                <td>${f.count}</td>
-                <td>${fees.stuId}</td>
-                <td>${fees.years}</td>
-                <td>${fees.fee}</td>
-                <td><fmt:formatDate value="${fees.paytime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
-                <td>${fees.paystatus}</td>
-                <c:if test="${fees.paystatus == '未缴费'}">
-                    <td><button class="btn btn-default btn-sm" onclick="editFees(${fees.id})">确认缴费</button>&nbsp;<button class="btn btn-default btn-sm" onclick="window.location.href='/man/queryFeesOne.do?id=${fees.id}'">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delStuFees(${fees.id})">删除</button></td>
+    <div style="float: right;">
+        <a href="${pageContext.request.contextPath}/common/addFeesForm.jsp?currentPage=${pageResult.currentPage}"><button type="button" class="btn btn-primary">添加缴费记录</button></a>
+        <a id="delSelect"><button type="button" class="btn btn-primary">删除选中</button></a>
+    </div>
+    <form method="post" action="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${pageResult.currentPage}" id="myform">
+        <table border="1" class="table table-bordered table-hover">
+            <tr class="success">
+                <th><input type="checkbox" name="uid" id="first"></th>
+                <th>编号</th>
+                <th>学号</th>
+                <th>年份</th>
+                <th>缴费金额</th>
+                <th>缴费时间</th>
+                <th>缴费状态</th>
+                <th>操作</th>
+            </tr>
+            <c:forEach items="${pageResult.items}" var="fees" varStatus="f">
+                <tr>
+                    <td><input type="checkbox" name="uids" value="${fees.id}"></td>
+                    <td>${f.count}</td>
+                    <td>${fees.stuId}</td>
+                    <td>${fees.years}</td>
+                    <td>${fees.fee}</td>
+                    <td><fmt:formatDate value="${fees.paytime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+                    <td>${fees.paystatus}</td>
+                    <c:if test="${fees.paystatus == '未缴费'}">
+                        <td><button class="btn btn-default btn-sm" onclick="editFees(${fees.id})">确认缴费</button>&nbsp;<button class="btn btn-default btn-sm" onclick="queryOne('/man/queryFeesOne.do',${fees.id})">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delOne('/man/delStuFees.do',${fees.id})">删除</button></td>
                     </c:if>
                     <c:if test="${fees.paystatus != '未缴费'}">
-                        <td><button class="btn btn-default btn-sm" onclick="editFees(${fees.id})">取消确认</button>&nbsp;<button class="btn btn-default btn-sm" onclick="window.location.href='/man/queryFeesOne.do?id=${fees.id}'">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delStuFees(${fees.id})">删除</button></td>
+                        <td><button class="btn btn-default btn-sm" onclick="editFees(${fees.id})">取消确认</button>&nbsp;<button class="btn btn-default btn-sm" onclick="queryOne('/man/queryFeesOne.do',${fees.id})">修改</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delOne('/man/delStuFees.do',${fees.id})">删除</button></td>
                     </c:if>
+                </tr>
+            </c:forEach>
+            <tr>
+                <td colspan="13" align="center"><a class="btn btn-primary" href="${pageContext.request.contextPath}/common/addFeesForm.jsp">添加缴费记录</a></td>
             </tr>
-        </c:forEach>
-    </table>
-    <ul class="pagination">
-        <c:if test="${pageResult.currentPage<=1}">
-        <li class="disabled">
+        </table>
+    </form>
+    <c:if test="${pageResult.totalPage>0}">
+        <ul class="pagination">
+            <c:if test="${pageResult.currentPage<=1}">
+                <li class="disabled"><a href="javascript:void(0)">&laquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage>1}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${pageResult.currentPage-1}&sty_ID=${map.sty_ID[0]}&year=${map.year[0]}&paystatus=${map.paystatus[0]}">&laquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${pageResult.currentPage-1}&room_ID=${map.room_ID[0]}" onclick="">&laquo;</a></li>
-        <c:forEach begin="1" end="${pageResult.totalPage}" step="1" varStatus="s" var="i">
-            <c:if test="${pageResult.currentPage==i}">
-                <li class="active"><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-            <c:if test="${pageResult.currentPage!=i}">
-                <li><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-        </c:forEach>
-        <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
-        <li class="disabled">
+            <c:forEach begin="${pageResult.currentPage-5>0?(pageResult.totalPage-pageResult.currentPage<=5?pageResult.totalPage-9:pageResult.currentPage-4):1}" end="${pageResult.currentPage<=pageResult.totalPage-5?(pageResult.currentPage+5<10&&pageResult.totalPage>10?10:pageResult.currentPage+5):pageResult.totalPage}" step="1" varStatus="s" var="i">
+                <c:if test="${pageResult.currentPage==i}">
+                    <li class="active"><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${i}&sty_ID=${map.sty_ID[0]}&year=${map.year[0]}&paystatus=${map.paystatus[0]}">${i}</a></li>
+                </c:if>
+                <c:if test="${pageResult.currentPage!=i}">
+                    <li><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${i}&sty_ID=${map.sty_ID[0]}&year=${map.year[0]}&paystatus=${map.paystatus[0]}">${i}</a></li>
+                </c:if>
+            </c:forEach>
+            <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
+                <li class="disabled"><a href="javascript:void(0)">&raquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage<pageResult.totalPage}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${pageResult.currentPage+1}&sty_ID=${map.sty_ID[0]}&year=${map.year[0]}&paystatus=${map.paystatus[0]}">&raquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryFees.do?currentPage=${pageResult.currentPage+1}&room_ID=${map.room_ID[0]}}">&raquo;</a></li>
-        <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
-    </ul>
+            <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
+        </ul><br>
+        <span style="font-size: 20px;margin-top: 15px">跳转到：<input type="text" style="width: 40px;height: 30px;" id="jump" value="${pageResult.currentPage}">
+            <a><button type="button" class="btn btn-primary" onclick="jump('/man/queryFees.do?sty_ID=${map.sty_ID[0]}&year=${map.year[0]}&paystatus=${map.paystatus[0]}',${pageResult.totalPage})">跳转到</button></a>
+        </span>
+    </c:if>
 </div>
 </body>
 </html>

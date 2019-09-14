@@ -97,4 +97,16 @@ public interface ManageService {
     Notice queryNoticeOne(Integer id);
 
     Boolean delNotice(Integer id);
+
+    Boolean addNotice(Notice notice,Integer dormId);
+
+    Boolean delRepair(Integer id);
+
+    Boolean addFees(Fees fees);
+
+    Boolean addHealth(Health health);
+
+    Boolean addVisitor(Visitor visitor,Integer dormId);
+
+    Boolean addWater(Water water);
 }

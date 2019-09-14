@@ -28,8 +28,12 @@
     <script src="../js/jquery-3.2.1.min.js"></script>
     <!-- 3. 导入bootstrap的js文件 -->
     <script src="../js/bootstrap.min.js"></script>
-    <script src="/js/jquery-3.2.1.min.js"></script>
     <script src="/js/common.js"></script>
+    <script>
+        $(function () {
+            delSelect();
+        })
+    </script>
     <style type="text/css">
         td, th {
             text-align: center;
@@ -52,8 +56,13 @@
             <button type="submit" class="btn btn-default">搜索</button>
         </form>
     </div>
+    <div style="float: right;">
+        <a id="delSelect"><button type="button" class="btn btn-primary">删除选中</button></a>
+    </div>
+    <form method="post" action="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${pageResult.currentPage}" id="myform">
         <table border="1" class="table table-bordered table-hover">
             <tr class="success">
+                <th><input type="checkbox" name="uid" id="first"></th>
                 <th>编号</th>
                 <th>学号</th>
                 <th>留宿原因</th>
@@ -64,50 +73,61 @@
                 <th>申请状态</th>
                 <th>操作</th>
             </tr>
-            <c:forEach items="${pageResult.items}" var="stay" varStatus="s">
-                <tr>
-                    <td>${s.count}</td>
-                    <td>${stay.stuId}</td>
-                    <td>${stay.reason}</td>
-                    <td>${stay.parent}</td>
-                    <td>${stay.teacher}</td>
-                    <td><fmt:formatDate value="${stay.startTime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
-                    <td><fmt:formatDate value="${stay.endTime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
-                    <td>${stay.status}</td>
-                    <c:if test="${stay.status == '待审核'}">
-                    <td><button class="btn btn-default btn-sm" onclick="editStay(${stay.id})">通过</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delStay(${stay.id})">删除</button>
-                    </c:if>
-                    <c:if test="${stay.status != '待审核'}">
-                    <td><button class="btn btn-default btn-sm" onclick="editStay(${stay.id})">取消</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delStay(${stay.id})">删除</button>
-                    </c:if>
-                </tr>
-            </c:forEach>
+            <c:if test="${empty pageResult.items}">
+                <tr><td colspan="10">暂无相关消息</td></tr>
+            </c:if>
+            <c:if test="${not empty pageResult.items}">
+                <c:forEach items="${pageResult.items}" var="stay" varStatus="s">
+                    <tr>
+                        <td><input type="checkbox" name="uids" value="${stay.id}"></td>
+                        <td>${s.count}</td>
+                        <td>${stay.stuId}</td>
+                        <td>${stay.reason}</td>
+                        <td>${stay.parent}</td>
+                        <td>${stay.teacher}</td>
+                        <td><fmt:formatDate value="${stay.startTime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+                        <td><fmt:formatDate value="${stay.endTime}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
+                        <td>${stay.status}</td>
+                        <c:if test="${stay.status == '待审核'}">
+                        <td><button class="btn btn-default btn-sm" onclick="editOne('/man/editStay.do',${stay.id})">通过</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delOne('/man/delStay.do',${stay.id})">删除</button>
+                            </c:if>
+                            <c:if test="${stay.status != '待审核'}">
+                        <td><button class="btn btn-default btn-sm" onclick="editOne('/man/editStay.do',${stay.id})">取消</button>&nbsp;<button class="btn btn-default btn-sm" onclick="delOne('/man/delStay.do',${stay.id})">删除</button>
+                            </c:if>
+                    </tr>
+                </c:forEach>
+            </c:if>
         </table>
-    <ul class="pagination">
-        <c:if test="${pageResult.currentPage<=1}">
-        <li class="disabled">
+    </form>
+    <c:if test="${pageResult.totalPage>0}">
+        <ul class="pagination">
+            <c:if test="${pageResult.currentPage<=1}">
+                <li class="disabled"><a href="javascript:void(0)">&laquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage>1}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${pageResult.currentPage-1}&stu_ID=${map.stu_ID[0]}&status=${map.status[0]}">&laquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${pageResult.currentPage-1}&room_ID=${map.room_ID[0]}" onclick="">&laquo;</a></li>
-        <c:forEach begin="1" end="${pageResult.totalPage}" step="1" varStatus="s" var="i">
-            <c:if test="${pageResult.currentPage==i}">
-                <li class="active"><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-            <c:if test="${pageResult.currentPage!=i}">
-                <li><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${i}&room_ID=${map.room_ID[0]}">${i}</a></li>
-            </c:if>
-        </c:forEach>
-        <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
-        <li class="disabled">
+            <c:forEach begin="${pageResult.currentPage-5>0?(pageResult.totalPage-pageResult.currentPage<=5?pageResult.totalPage-9:pageResult.currentPage-4):1}" end="${pageResult.currentPage<=pageResult.totalPage-5?(pageResult.currentPage+5<10&&pageResult.totalPage>10?10:pageResult.currentPage+5):pageResult.totalPage}" step="1" varStatus="s" var="i">
+                <c:if test="${pageResult.currentPage==i}">
+                    <li class="active"><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${i}&stu_ID=${map.stu_ID[0]}&status=${map.status[0]}">${i}</a></li>
+                </c:if>
+                <c:if test="${pageResult.currentPage!=i}">
+                    <li><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${i}&stu_ID=${map.stu_ID[0]}&status=${map.status[0]}">${i}</a></li>
+                </c:if>
+            </c:forEach>
+            <c:if test="${pageResult.currentPage>=pageResult.totalPage}">
+                <li class="disabled"><a href="javascript:void(0)">&raquo;</a></li>
             </c:if>
             <c:if test="${pageResult.currentPage<pageResult.totalPage}">
-        <li>
+                <li><a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${pageResult.currentPage+1}&stu_ID=${map.stu_ID[0]}&status=${map.status[0]}}">&raquo;</a></li>
             </c:if>
-            <a href="${pageContext.request.contextPath}/man/queryStay.do?currentPage=${pageResult.currentPage+1}&room_ID=${map.room_ID[0]}">&raquo;</a></li>
-        <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
-    </ul>
+            <li style="font-size: 25px;margin-left: 20px">总共有${pageResult.totalCount}条记录,有${pageResult.totalPage}页</li>
+        </ul><br>
+        <span style="font-size: 20px;margin-top: 15px">跳转到：<input type="text" style="width: 40px;height: 30px;" id="jump" value="${pageResult.currentPage}">
+            <a><button type="button" class="btn btn-primary" onclick="jump('/man/queryStay.do?stu_ID=${map.stu_ID[0]}&status=${map.status[0]}',${pageResult.totalPage})">跳转到</button></a>
+        </span>
+    </c:if>
+
 </div>
 </body>
 </html>

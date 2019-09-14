@@ -26,28 +26,38 @@
     <script src="../js/bootstrap.min.js"></script>
     <script>
         $(function () {
-            // updateNotice();
-            sendAjax("/man/updNotice.do")
+            sendAjax("/man/addHealth.do")
         })
     </script>
 </head>
 <body>
 <div class="container" style="width: 400px;">
-    <h3 style="text-align: center;">修改公告记录</h3>
+    <h3 style="text-align: center;">修改宿舍违纪记录</h3>
     <form action="#" method="post" id="myform">
-        <input type="hidden" name="id" value="${notice.id}">
+        <input type="hidden" name="id" value="">
         <div class="form-group">
-            <label for="content">内容：</label>
-            <input type="text" class="form-control" id="content" name="content" value="${notice.content}" />
-        </div>
-        <div class="form-group">
-            <label for="noticeTime">访问时间：</label>
-            <input type="date" id="noticeTime" class="form-control" name="noticeTime" value="<fmt:formatDate value='${notice.noticeTime}' pattern='yyyy-MM-dd'/>" />
+            <label for="roomId">宿舍号：</label>
+            <input type="text" class="form-control" id="roomId" name="roomId" value="" />
         </div>
 
         <div class="form-group">
-            <label for="noticePeoper">发布人：</label>
-            <input type="text" class="form-control" id="noticePeoper" name="noticePeoper" value="${notice.noticePeoper}" />
+            <label for="select">违纪类型：</label>
+            <select name="checkresult" id="select" class="form-control">
+                <option value="不合格">不合格</option>
+                <option value="合格">合格</option>
+                <option value="良好">良好</option>
+                <option value="优秀">优秀</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="checktime">违纪时间：</label>
+            <input type="date" id="checktime" class="form-control" name="checktime" value="" />
+        </div>
+
+        <div class="form-group">
+            <label for="remark">备注：</label>
+            <input type="text" class="form-control" id="remark" name="remark" value=""/>
         </div>
         <div class="form-group" style="text-align: center">
             <input class="btn btn-primary" id="submit1" type="submit" value="提交" />
